@@ -8,6 +8,7 @@ export default function RoleSelection() {
     <div className="view">
       <div className="content center-content">
         <div className="role-card">
+          <div className="role-title"><img src="src/images/Logo.png" width="140" height="80"></img></div>
           <div className="role-title">Who are you?</div>
           <div className="role-subtitle">
             Choose how you want to use Life-SOS.
@@ -31,7 +32,7 @@ export default function RoleSelection() {
             >
               <span className="role-label">
                 <span>🤝</span>
-                <span>Helper</span>
+                <span>Civil/Medical Responder</span>
               </span>
               <span className="role-tag">Offer help nearby</span>
             </button>

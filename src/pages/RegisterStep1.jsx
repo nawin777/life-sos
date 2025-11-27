@@ -1,4 +1,3 @@
-// src/pages/RegisterStep1.jsx
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { auth, db } from "../firebase";
@@ -23,8 +22,6 @@ export default function RegisterStep1() {
   const [busy, setBusy] = useState(false);
 
   const displayRole = roleLabel(role);
-
-  // For step bar: we're currently on step 1 and no step is completed yet.
   const currentStep = 1;
   const completedSteps = 0;
 
@@ -41,8 +38,7 @@ export default function RegisterStep1() {
     try {
       setBusy(true);
       setError("");
-
-      const email = `${phone.trim()}@sos.local`; // pseudo email from phone
+      const email = `${phone.trim()}@sos.local`; 
       const cred = await createUserWithEmailAndPassword(auth, email, pass);
       const uid = cred.user.uid;
 
@@ -54,7 +50,6 @@ export default function RegisterStep1() {
         verificationStatus: "pending",
       });
 
-      // After this, we consider step 1 "completed" and move to step 2
       navigate(`/register/${role}/step2`);
     } catch (e) {
       console.error(e);
@@ -71,7 +66,8 @@ export default function RegisterStep1() {
   return (
     <div className="view">
       <div className="header">
-        <button className="back-button" onClick={() => navigate(-1)}>
+        {/* FIX: Explicitly navigate to Home */}
+        <button className="back-button" onClick={() => navigate("/")}>
           ◀ Back
         </button>
         <div>
@@ -85,36 +81,35 @@ export default function RegisterStep1() {
         <StepBar currentStep={currentStep} completedSteps={completedSteps} />
 
         <div className="glass-card">
-          <div className="field-label">Full Name</div>
+          <div className="field-label">Full Name <span style={{color:'red'}}>*</span></div>
           <input
             className="input"
+            required
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Enter your name"
           />
 
-          <div className="field-label">Phone</div>
+          <div className="field-label">Phone <span style={{color:'red'}}>*</span></div>
           <input
             className="input"
+            required
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="+91 98765 43210"
           />
 
-          <div className="field-label">Password</div>
+          <div className="field-label">Password <span style={{color:'red'}}>*</span></div>
           <input
             className="input"
             type="password"
+            required
             value={pass}
             onChange={(e) => setPass(e.target.value)}
             placeholder="••••••••"
           />
 
-          {error && (
-            <div style={{ color: "red", fontSize: 12, marginTop: 4 }}>
-              {error}
-            </div>
-          )}
+          {error && <div style={{ color: "red", fontSize: 12, marginTop: 4 }}>{error}</div>}
 
           <button
             className="btn-primary"
@@ -125,28 +120,13 @@ export default function RegisterStep1() {
             {busy ? "Creating account..." : "Next"}
           </button>
 
-          <div
-            style={{
-              marginTop: 12,
-              fontSize: 12,
-              color: "#6b7280",
-              textAlign: "center",
-            }}
-          >
-            Already have an account?{" "}
-            <a
-              href="/login"
-              style={{ color: "#2563eb", textDecoration: "none" }}
-            >
-              Log in
-            </a>
+          <div style={{ marginTop: 12, fontSize: 12, color: "#6b7280", textAlign: "center" }}>
+            Already have an account? <a href="/login" style={{ color: "#2563eb", textDecoration: "none" }}>Log in</a>
           </div>
         </div>
       </div>
 
-      <div className="footer-note">
-        Step 1 of 2 • Passwords stored securely with Firebase Auth
-      </div>
+      <div className="footer-note">Step 1 of 2 • Passwords stored securely with Firebase Auth</div>
     </div>
   );
 }
