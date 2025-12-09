@@ -340,7 +340,7 @@ export default function Dashboard() {
         <div className="location-overlay">
           <div className="location-dialog">
             <div className="location-dialog-title">Location Required</div>
-            <div className="location-dialog-text">{locationError || "To use Life-SOS we need your location."}</div>
+            <div className="location-dialog-text">{/*locationError || */"Please login through the website once and grant location access"}</div>
             <button className="btn-primary" onClick={() => requestLocation(userDocRef)}>Try Again</button>
           </div>
         </div>
