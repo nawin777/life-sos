@@ -36,19 +36,19 @@ export default function NewsPage() {
           <div className="field-label">Today</div>
           <div className="list-card">
             <div className="list-card-title">
-              Safety awareness session scheduled
+              
             </div>
             <div className="list-card-sub">
-              Example placeholder news. Later you can fetch from Firestore or an API.
+              No News found currently.
             </div>
           </div>
 
           <div className="list-card">
             <div className="list-card-title">
-              Emergency helpline numbers updated
+              
             </div>
             <div className="list-card-sub">
-              Keep your contact list refreshed with verified helplines.
+              
             </div>
           </div>
         </div>

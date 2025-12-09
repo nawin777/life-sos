@@ -17,7 +17,7 @@ import {
 import { ref as sref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const POLICE_UID_FALLBACK = "DFLl5C29omPE2nAtQuQcq9yaMpR2"; 
-const GOOGLE_MAPS_API_KEY = ""; // Insert Key Here
+const GOOGLE_MAPS_API_KEY = "";
 
 export default function GroupChat() {
   const { groupId } = useParams();
@@ -249,74 +249,169 @@ export default function GroupChat() {
   return (
     <div className="gc-wrapper">
       <style>{`
-        .gc-wrapper { display: flex; justify-content: center; background: #333; height: 100vh; width: 100%; overflow: hidden; }
-        .gc-container { width: 100%; max-width: 420px; background: #efe7dd; background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png"); background-repeat: repeat; background-size: 300px; display: flex; flex-direction: column; position: relative; height: 100%; }
-        
-        @media (min-width: 600px) { 
-            .gc-container { height: 95vh; margin-top: 2.5vh; border-radius: 20px; overflow: hidden; box-shadow: 0 0 0 10px #111; } 
-        }
-        
-        .gc-header { background: #075e54; color: white; padding: 10px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); z-index: 10; flex-shrink: 0; }
-        .gc-header-info { flex: 1; cursor: pointer; }
-        .gc-header-title { font-weight: 600; font-size: 16px; }
-        .gc-header-sub { font-size: 11px; opacity: 0.85; }
-        .gc-icon { cursor: pointer; padding: 5px; font-size: 18px; }
+  /* --- 1. GLOBAL RESET --- */
+  .gc-wrapper, .gc-wrapper * { 
+      box-sizing: border-box; 
+      outline: none; 
+      -webkit-tap-highlight-color: transparent;
+  }
 
-        .gc-content { 
-            flex: 1; 
-            overflow-y: auto; 
-            overflow-x: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            padding-bottom: 70px; 
-            -webkit-overflow-scrolling: touch; 
-            min-height: 0;
-        }
-        
-        .gc-live-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; color: white; padding: 4px 10px; font-size: 11px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
-        .gc-live-dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.5; } }
-        .gc-card-wrapper { padding: 10px 10px 0 10px; flex-shrink: 0; }
-        .gc-card { background: white; border-radius: 8px; padding: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); font-size: 13px; }
-        .gc-card.police { border-left: 4px solid #075e54; }
-        .gc-card.alert { background: #fff3cd; border-left: 4px solid #ffc107; color: #856404; }
-        .gc-map-active { height: 120px; border-radius: 8px; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px; background-size: cover; background-position: center; position: relative; box-shadow: inset 0 -40px 40px rgba(0,0,0,0.5); }
-        .gc-map-overlay-text { color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8); z-index: 2; position: relative; }
-        .gc-locked-zone { background: #f3f4f6; border: 1px dashed #d1d5db; border-radius: 8px; padding: 20px; text-align: center; color: #6b7280; display: flex; flex-direction: column; align-items: center; }
-        .gc-btn-disabled { background: #e5e7eb; color: #9ca3af; border: none; padding: 8px 16px; border-radius: 20px; margin-top: 10px; font-weight: 600; cursor: not-allowed; }
-        .gc-nav-btn { background: #3b82f6; color: white; border: none; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .gc-chat-row { display: flex; margin: 4px 12px; }
-        .gc-chat-row.right { justify-content: flex-end; }
-        .gc-chat-row.left { justify-content: flex-start; }
-        .gc-bubble { max-width: 80%; padding: 6px 10px; border-radius: 8px; box-shadow: 0 1px 1px rgba(0,0,0,0.15); font-size: 14px; position: relative; word-wrap: break-word; }
-        .gc-bubble.mine { background: #dcf8c6; border-top-right-radius: 0; }
-        .gc-bubble.other { background: #fff; border-top-left-radius: 0; }
-        .gc-bubble.private { background: #fff8e1; border: 1px solid #ffc107; }
-        .gc-bubble.to-police { background: #e0f2fe; border: 1px solid #3b82f6; }
-        .gc-private-label { font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; display: block; }
-        .gc-chat-name { font-size: 11px; font-weight: 700; color: #D41A59; margin-bottom: 2px; }
-        .gc-chat-time { font-size: 10px; color: #999; text-align: right; margin-top: 2px; display: block; }
-        .gc-input-bar { position: absolute; bottom: 0; width: 100%; background: #f0f0f0; padding: 8px 10px; display: flex; align-items: center; gap: 8px; z-index: 20; height: 60px; }
-        .gc-input-field { flex: 1; border: none; border-radius: 20px; padding: 10px 15px; font-size: 15px; outline: none; background: #fff; }
-        .gc-input-field.police-mode { border: 2px solid #3b82f6; background: #eff6ff; color: #1e3a8a; } 
-        .gc-send-btn { background: #075e54; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; }
-        .gc-icon-btn { color: #54656f; font-size: 20px; padding: 5px; cursor: pointer; }
-        .gc-shield-btn { color: #cbd5e1; font-size: 20px; padding: 5px; cursor: pointer; transition: 0.2s; }
-        .gc-shield-btn.active { color: #3b82f6; text-shadow: 0 0 10px rgba(59,130,246,0.5); }
-        .gc-modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 50; display: flex; align-items: center; justify-content: center; }
-        .gc-modal { background: white; width: 90%; max-width: 350px; border-radius: 12px; padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-        .gc-modal-header { font-weight: 700; font-size: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; }
-        .gc-member-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
-        .gc-member-info { display: flex; flex-direction: column; }
-        .gc-member-name { font-weight: 600; font-size: 14px; }
-        .gc-member-role { font-size: 11px; color: #666; }
-        .gc-btn-sm { font-size: 10px; padding: 4px 8px; border-radius: 4px; border: none; cursor: pointer; margin-left: 4px; }
-        .gc-btn-danger { background: #fee2e2; color: #ef4444; }
-        .gc-btn-action { background: #e0f2fe; color: #0284c7; }
-        .gc-btn-success { background: #dcfce7; color: #166534; }
-        .gc-close-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; margin-top: 10px; width: 100%; cursor: pointer;}
-        .gc-waiting-box { background: #f0fdf4; border: 1px dashed #4ade80; border-radius: 8px; padding: 20px; text-align: center; color: #166534; display: flex; flex-direction: column; align-items: center; }
-      `}</style>
+  /* --- 2. MAIN VIEWPORT LOCK --- */
+  .gc-wrapper { 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      right: 0; 
+      bottom: 0; 
+      background: #333; 
+      z-index: 99999; 
+      display: flex; 
+      justify-content: center;
+      overflow: hidden; 
+      height: 100dvh; 
+  }
+
+  /* --- 3. FLEX CONTAINER --- */
+  .gc-container { 
+      width: 100%; 
+      max-width: 420px; 
+      background: #efe7dd; 
+      background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png"); 
+      background-repeat: repeat; 
+      background-size: 300px; 
+      display: flex; 
+      flex-direction: column; 
+      height: 100%; 
+      position: relative;
+  }
+  
+  @media (min-width: 600px) { 
+      .gc-container { 
+          height: 95dvh; 
+          margin-top: 2.5dvh; 
+          border-radius: 20px; 
+          box-shadow: 0 0 0 10px #111; 
+      } 
+  }
+
+  /* --- 4. HEADER (Fixed) --- */
+  .gc-header { 
+      background: #075e54; 
+      color: white; 
+      padding: 10px 16px; 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2); 
+      z-index: 10; 
+      flex-shrink: 0; 
+      min-height: 60px;
+  }
+  .gc-header-info { flex: 1; cursor: pointer; }
+  .gc-header-title { font-weight: 600; font-size: 16px; margin: 0; line-height: 1.2; }
+  .gc-header-sub { font-size: 11px; opacity: 0.85; margin: 0; }
+  .gc-icon { cursor: pointer; padding: 5px; font-size: 18px; }
+
+  /* --- 5. CONTENT AREA (Fixed Parent) --- */
+  .gc-content { 
+      flex: 1; 
+      display: flex; 
+      flex-direction: column; 
+      /* KEY CHANGE: Stop the main area from scrolling */
+      overflow: hidden; 
+  }
+
+  /* --- 6. TOP CARDS (Map/Instructions - Fixed) --- */
+  .gc-card-wrapper { 
+      flex-shrink: 0; /* Prevent shrinking */
+      padding: 10px 10px 0 10px; 
+  }
+
+  /* --- 7. MESSAGE LIST (Scrollable Child) --- */
+  /* This targets the div containing the messages */
+  .gc-content > div:last-child {
+      flex: 1;                  /* Take up all remaining space */
+      overflow-y: auto;         /* Scroll ONLY this section */
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch; 
+      padding-bottom: 10px;     /* Breathing room before input */
+  }
+
+  /* --- 8. INPUT BAR (Fixed Bottom) --- */
+  .gc-input-bar { 
+      position: relative; 
+      width: 100%; 
+      background: #f0f0f0; 
+      padding: 8px 10px; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      z-index: 20; 
+      min-height: 60px; 
+      flex-shrink: 0; 
+      padding-bottom: calc(45px + env(safe-area-inset-bottom)); 
+  }
+  
+  .gc-input-field { 
+      flex: 1; 
+      border: none; 
+      border-radius: 20px; 
+      padding: 10px 15px; 
+      font-size: 15px; 
+      outline: none; 
+      background: #fff; 
+      height: 40px; 
+  }
+  .gc-input-field.police-mode { border: 2px solid #3b82f6; background: #eff6ff; color: #1e3a8a; } 
+  .gc-send-btn { background: #075e54; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; flex-shrink: 0; margin-left: 4px; }
+  .gc-icon-btn { color: #54656f; font-size: 20px; padding: 5px; cursor: pointer; flex-shrink: 0; }
+  .gc-shield-btn { color: #cbd5e1; font-size: 20px; padding: 5px; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
+  .gc-shield-btn.active { color: #3b82f6; text-shadow: 0 0 10px rgba(59,130,246,0.5); }
+  
+  /* --- 9. COMPONENTS --- */
+  .gc-live-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; color: white; padding: 4px 10px; font-size: 11px; display: flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; }
+  .gc-live-dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.5; } }
+  
+  .gc-card { background: white; border-radius: 8px; padding: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); font-size: 13px; }
+  .gc-card.police { border-left: 4px solid #075e54; }
+  .gc-card.alert { background: #fff3cd; border-left: 4px solid #ffc107; color: #856404; }
+  
+  .gc-map-active { height: 120px; border-radius: 8px; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px; background-size: cover; background-position: center; position: relative; box-shadow: inset 0 -40px 40px rgba(0,0,0,0.5); }
+  .gc-map-overlay-text { color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8); z-index: 2; position: relative; width: 100%; }
+  
+  .gc-locked-zone { background: #f3f4f6; border: 1px dashed #d1d5db; border-radius: 8px; padding: 20px; text-align: center; color: #6b7280; display: flex; flex-direction: column; align-items: center; }
+  .gc-btn-disabled { background: #e5e7eb; color: #9ca3af; border: none; padding: 8px 16px; border-radius: 20px; margin-top: 10px; font-weight: 600; cursor: not-allowed; }
+  .gc-nav-btn { background: #3b82f6; color: white; border: none; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-left: auto; }
+  
+  .gc-chat-row { display: flex; margin: 4px 12px; }
+  .gc-chat-row.right { justify-content: flex-end; }
+  .gc-chat-row.left { justify-content: flex-start; }
+  .gc-bubble { max-width: 80%; padding: 6px 10px; border-radius: 8px; box-shadow: 0 1px 1px rgba(0,0,0,0.15); font-size: 14px; position: relative; word-wrap: break-word; }
+  .gc-bubble.mine { background: #dcf8c6; border-top-right-radius: 0; }
+  .gc-bubble.other { background: #fff; border-top-left-radius: 0; }
+  .gc-bubble.private { background: #fff8e1; border: 1px solid #ffc107; }
+  .gc-bubble.to-police { background: #e0f2fe; border: 1px solid #3b82f6; }
+  .gc-private-label { font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; display: block; }
+  .gc-chat-name { font-size: 11px; font-weight: 700; color: #D41A59; margin-bottom: 2px; }
+  .gc-chat-time { font-size: 10px; color: #999; text-align: right; margin-top: 2px; display: block; }
+  .gc-img-preview { max-width: 100%; border-radius: 8px; }
+
+  /* --- 10. MODALS --- */
+  .gc-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 50; display: flex; align-items: center; justify-content: center; }
+  .gc-modal { background: white; width: 90%; max-width: 350px; border-radius: 12px; padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 51; }
+  .gc-modal-header { font-weight: 700; font-size: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; }
+  .gc-member-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+  .gc-member-info { display: flex; flex-direction: column; }
+  .gc-member-name { font-weight: 600; font-size: 14px; }
+  .gc-member-role { font-size: 11px; color: #666; }
+  .gc-btn-sm { font-size: 10px; padding: 4px 8px; border-radius: 4px; border: none; cursor: pointer; margin-left: 4px; }
+  .gc-btn-danger { background: #fee2e2; color: #ef4444; }
+  .gc-btn-action { background: #e0f2fe; color: #0284c7; }
+  .gc-btn-success { background: #dcfce7; color: #166534; }
+  .gc-close-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; margin-top: 10px; width: 100%; cursor: pointer;}
+  .gc-waiting-box { background: #f0fdf4; border: 1px dashed #4ade80; border-radius: 8px; padding: 20px; text-align: center; color: #166534; display: flex; flex-direction: column; align-items: center; }
+`}</style>
 
       <div className="gc-container">
         

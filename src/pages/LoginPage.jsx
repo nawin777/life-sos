@@ -34,7 +34,7 @@ export default function LoginPage() {
       } else if (e.code === "auth/wrong-password") {
         setError("Incorrect password. Try again.");
       } else {
-        setError(e.message);
+        setError("Invalid Credentials. Try again");
       }
     } finally {
       setBusy(false);
@@ -61,7 +61,7 @@ export default function LoginPage() {
             className="input"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            placeholder="+91 98765 43210"
+            placeholder="Enter your Phone number"
           />
 
           <div className="field-label">Password</div>
