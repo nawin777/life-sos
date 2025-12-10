@@ -121,12 +121,7 @@ export default function RegisterStep1() {
           </button>
 
           <div style={{ marginTop: 12, fontSize: 12, color: "#6b7280", textAlign: "center" }}>
-            Already have an account? <Link
-              to="/login"
-              style={{ color: "#2563eb", textDecoration: "none" }}
-            >
-              Log in
-            </Link>
+            Already have an account? <a href="/login" style={{ color: "#2563eb", textDecoration: "none" }}>Log in</a>
           </div>
         </div>
       </div>
