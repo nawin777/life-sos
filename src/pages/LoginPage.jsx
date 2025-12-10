@@ -61,7 +61,7 @@ export default function LoginPage() {
             className="input"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            placeholder="Enter your Phone number"
+            placeholder="Enter your phone number"
           />
 
           <div className="field-label">Password</div>

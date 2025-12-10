@@ -117,7 +117,7 @@ export default function RegisterStep2() {
           <input className="input" required value={idNumber} onChange={(e) => setIdNumber(e.target.value)} placeholder="Enter ID number" />
 
           <div className="field-label">Designation <span style={{color:'red'}}>*</span></div>
-          <input className="input" required value={designation} onChange={(e) => setDesignation(e.target.value)} placeholder={role === "helper" ? "e.g., Student Volunteer" : role === "police" ? "e.g., Inspector" : "e.g., Working Professional"} />
+          <input className="input" required value={designation} onChange={(e) => setDesignation(e.target.value)} placeholder={role === "helper" ? "e.g., NSS Volunteer" : role === "police" ? "e.g., Inspector" : "e.g., Private Employee"} />
 
           <div className="field-label">Upload ID Proof (Optional)</div>
           <input className="input" type="file" accept="image/*,.pdf" onChange={(e) => setIdFile(e.target.files?.[0] || null)} />
@@ -130,12 +130,12 @@ export default function RegisterStep2() {
           {error && <div style={{ color: "red", fontSize: 12, marginTop: 6 }}>{error}</div>}
 
           <button className="btn-primary" onClick={handleFinish} disabled={busy} style={{ marginTop: 12 }}>
-            {busy ? "Saving…" : "Finish & Go to Dashboard"}
+            {busy ? "Saving…" : "Finish Registration"}
           </button>
         </div>
       </div>
 
-      <div className="footer-note">Step 2 of 2 • Verification details stored in Firestore & Storage</div>
+      <div className="footer-note">Step 2 of 2 • Verification will be completed within 24 hours</div>
     </div>
   );
 }

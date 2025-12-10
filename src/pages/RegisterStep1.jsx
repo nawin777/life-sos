@@ -96,7 +96,7 @@ export default function RegisterStep1() {
             required
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            placeholder="+91 98765 43210"
+            placeholder="Enter your phone number"
           />
 
           <div className="field-label">Password <span style={{color:'red'}}>*</span></div>
@@ -117,7 +117,7 @@ export default function RegisterStep1() {
             disabled={busy}
             style={{ marginTop: 8 }}
           >
-            {busy ? "Creating account..." : "Next"}
+            {busy ? "Saving and Procceding..." : "Next"}
           </button>
 
           <div style={{ marginTop: 12, fontSize: 12, color: "#6b7280", textAlign: "center" }}>
@@ -126,7 +126,7 @@ export default function RegisterStep1() {
         </div>
       </div>
 
-      <div className="footer-note">Step 1 of 2 • Passwords stored securely with Firebase Auth</div>
+      <div className="footer-note">Step 1 of 2 • Primary Details Entry</div>
     </div>
   );
 }
