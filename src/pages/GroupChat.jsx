@@ -16,7 +16,7 @@ import {
 } from "firebase/firestore";
 import { ref as sref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-const POLICE_UID_FALLBACK = "DFLl5C29omPE2nAtQuQcq9yaMpR2"; 
+const POLICE_UID_FALLBACK = "enOy7o3BsmZQTVfCfGPUAd5D7Pj1"; 
 const GOOGLE_MAPS_API_KEY = "";
 
 export default function GroupChat() {
